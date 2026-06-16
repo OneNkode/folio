@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:folio/api/providers/database_provider.dart';
 import 'package:folio/models/config.dart';
+import 'package:folio/models/home_layout.dart';
 import 'package:folio/models/icon_pack.dart';
 import 'package:folio/theme/colors/accent.dart';
 import 'package:folio/theme/colors/dark_mobile.dart';
@@ -130,6 +131,8 @@ class SettingsProvider extends ChangeNotifier {
   int _adaptiveSeedColor;
   // navbar order (JSON-encoded list of page names)
   String _navbarOrder;
+  // home layout (JSON-encoded list of HomeWidgetItem)
+  String _homeLayout;
 
   SettingsProvider({
     DatabaseProvider? database,
@@ -218,6 +221,7 @@ class SettingsProvider extends ChangeNotifier {
     required bool liveCountdownDuringBreak,
     int adaptiveSeedColor = 0,
     String navbarOrder = '["home","grades","timetable"]',
+    String homeLayout = '',
   })  : _database = database,
         _language = language,
         _startPage = startPage,
@@ -303,7 +307,8 @@ class SettingsProvider extends ChangeNotifier {
         _liveCountdownDuringLesson = liveCountdownDuringLesson,
         _liveCountdownDuringBreak = liveCountdownDuringBreak,
         _adaptiveSeedColor = adaptiveSeedColor,
-        _navbarOrder = navbarOrder;
+        _navbarOrder = navbarOrder,
+        _homeLayout = homeLayout;
 
   factory SettingsProvider.fromMap(Map map,
       {required DatabaseProvider database}) {
@@ -411,6 +416,7 @@ class SettingsProvider extends ChangeNotifier {
       liveCountdownDuringBreak: (map['live_countdown_during_break'] ?? 1) == 1,
       adaptiveSeedColor: map['adaptive_seed_color'] ?? 0,
       navbarOrder: map['navbar_order'] ?? '["home","grades","timetable"]',
+      homeLayout: map['home_layout'] ?? '',
     );
   }
 
@@ -504,6 +510,7 @@ class SettingsProvider extends ChangeNotifier {
       "live_countdown_during_break": _liveCountdownDuringBreak ? 1 : 0,
       "adaptive_seed_color": _adaptiveSeedColor,
       "navbar_order": _navbarOrder,
+      "home_layout": _homeLayout,
     };
   }
 
@@ -599,6 +606,7 @@ class SettingsProvider extends ChangeNotifier {
       liveCountdownBeforeMinutes: 5,
       liveCountdownDuringLesson: true,
       liveCountdownDuringBreak: true,
+      homeLayout: HomeLayout.defaults().toJson(),
     );
   }
 
@@ -696,6 +704,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  HomeLayout get homeLayout => HomeLayout.fromJson(_homeLayout);
+
   Future<void> update({
     bool store = true,
     String? language,
@@ -779,6 +789,7 @@ class SettingsProvider extends ChangeNotifier {
     bool? liveCountdownDuringBreak,
     int? adaptiveSeedColor,
     String? navbarOrder,
+    String? homeLayoutJson,
   }) async {
     if (language != null && language != _language) _language = language;
     if (startPage != null && startPage != _startPage) _startPage = startPage;
@@ -1035,6 +1046,9 @@ class SettingsProvider extends ChangeNotifier {
     }
     if (navbarOrder != null && navbarOrder != _navbarOrder) {
       _navbarOrder = navbarOrder;
+    }
+    if (homeLayoutJson != null && homeLayoutJson != _homeLayout) {
+      _homeLayout = homeLayoutJson;
     }
     // change updated at time
     _updatedAt = DateTime.now();

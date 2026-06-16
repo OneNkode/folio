@@ -11,13 +11,15 @@ extension SettingsLocalization on String {
           "title_start": "So let's summarize...",
           "title_grades": "Let's look at your grades... 📖",
           "title_lessons": "Your favorite lesson 💓",
+          "title_allsum": "Everything at a glance 📊",
           "title_personality": "Your personality is...",
           // start page
           "start": "Start",
+          "next": "Next",
+          "finish": "Done",
           // grades page
-          "tryagain": "Trial and error 🔃",
-          "oops": "Ouch... 🥴",
-          "endyear_avg": "Year-end average",
+          "best_subjects": "Your best subjects 🏆",
+          "to_improve": "Room to grow 🌱",
           // lessons page
           "absence": "%s absence(s)",
           "delay": "A total of %s minute(s) late",
@@ -46,13 +48,15 @@ extension SettingsLocalization on String {
           "title_start": "Összegezzünk hát...",
           "title_grades": "Nézzük a jegyeidet... 📖",
           "title_lessons": "A kedvenc órád 💓",
+          "title_allsum": "Minden egy helyen 📊",
           "title_personality": "A te személyiséged...",
           // start page
           "start": "Kezdés",
+          "next": "Tovább",
+          "finish": "Kész",
           // grades page
-          "tryagain": "Próba teszi a mestert! 🔃",
-          "oops": "Ajjaj... 🥴",
-          "endyear_avg": "Év végi átlagod",
+          "best_subjects": "Legjobb tárgyaid 🏆",
+          "to_improve": "Amin még dolgozhatsz 🌱",
           // lessons page
           "absence": "%s hiányzás",
           "delay": "Összesen %s perc késés",
@@ -81,13 +85,15 @@ extension SettingsLocalization on String {
           "title_start": "Fassen wir also zusammen...",
           "title_grades": "Schauen wir uns eure Tickets an... 📖",
           "title_lessons": "Deine Lieblingsuhr 💓",
+          "title_allsum": "Alles auf einen Blick 📊",
           "title_personality": "Deine Persönlichkeit...",
           // start page
           "start": "Anfang",
+          "next": "Weiter",
+          "finish": "Fertig",
           // grades page
-          "tryagain": "Er stellt den Meister auf die Probe! 🔃",
-          "oops": "Autsch... 🥴",
-          "endyear_avg": "Ihr Jahresenddurchschnitt",
+          "best_subjects": "Deine besten Fächer 🏆",
+          "to_improve": "Hier ist noch Luft nach oben 🌱",
           // lessons page
           "absence": "%s Abwesenheit(en)",
           "delay": "Insgesamt %s Minute(n) zu spät",
@@ -115,4 +121,3 @@ extension SettingsLocalization on String {
   String plural(int value) => localizePlural(value, this, _t);
   String version(Object modifier) => localizeVersion(modifier, this, _t);
 }
-

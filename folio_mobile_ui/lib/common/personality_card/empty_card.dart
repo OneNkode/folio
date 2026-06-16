@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
-import 'package:folio/models/settings.dart';
+import 'package:folio/theme/colors/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class EmptyCard extends StatefulWidget {
   const EmptyCard({
@@ -25,6 +24,8 @@ class _EmptyCardState extends State<EmptyCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onLongPressDown: (_) => setState(() => hold = true),
       onLongPressEnd: (_) => setState(() => hold = false),
@@ -35,35 +36,46 @@ class _EmptyCardState extends State<EmptyCard> {
         duration: const Duration(milliseconds: 300),
         child: Container(
           height: 444,
-          padding:
-              const EdgeInsets.only(top: 12, bottom: 12, left: 12, right: 12),
+          padding: const EdgeInsets.all(12.0),
           decoration: BoxDecoration(
-            color: const Color(0x280008FF),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            boxShadow: [
-              if (Provider.of<SettingsProvider>(context, listen: false)
-                  .shadowEffect)
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.08),
-                  offset: const Offset(0, 5),
-                  blurRadius: 20,
-                  spreadRadius: 10,
-                ),
-            ],
+            color: colorScheme.primaryContainer,
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
           ),
           child: DottedBorder(
-            options: const RectDottedBorderOptions(
-              color: Colors.black,
-              dashPattern: [12, 12],
-              padding:
-                  EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
+            options: RoundedRectDottedBorderOptions(
+              radius: const Radius.circular(20),
+              color: colorScheme.primary.withValues(alpha: 0.4),
+              dashPattern: const [6, 6],
+              padding: const EdgeInsets.all(20),
             ),
             child: Center(
-              child: Text(
-                widget.text,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.9),
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 72.0,
+                    height: 72.0,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 32.0,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  Text(
+                    widget.text,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.of(context).text.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

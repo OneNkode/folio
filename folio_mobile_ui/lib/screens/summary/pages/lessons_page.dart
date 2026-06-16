@@ -1,10 +1,9 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
-import 'dart:math';
-
 import 'package:folio/api/providers/user_provider.dart';
 import 'package:folio/helpers/subject.dart';
 import 'package:folio/models/settings.dart';
+import 'package:folio/theme/colors/colors.dart';
 import 'package:folio/utils/format.dart';
 import 'package:folio_kreta_api/models/absence.dart';
 import 'package:folio_kreta_api/models/lesson.dart';
@@ -12,22 +11,10 @@ import 'package:folio_kreta_api/models/subject.dart';
 import 'package:folio_kreta_api/models/week.dart';
 import 'package:folio_kreta_api/providers/absence_provider.dart';
 import 'package:folio_kreta_api/providers/timetable_provider.dart';
+import 'package:folio_mobile_ui/common/empty.dart';
 import 'package:folio_mobile_ui/screens/summary/summary_screen.i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-List<String> faces = [
-  "(·.·)",
-  "(≥o≤)",
-  "(·_·)",
-  "(˚Δ˚)b",
-  "(^-^*)",
-  "(='X'=)",
-  "(>_<)",
-  "(;-;)",
-  "\\(^Д^)/",
-  "\\(o_o)/",
-];
 
 class SubjectAbsence {
   GradeSubject subject;
@@ -128,131 +115,114 @@ class LessonsBodyState extends State<LessonsBody> {
     delays.sort((a, b) => -a.delay.compareTo(b.delay));
   }
 
-  void generateTiles() {
-    Widget leastAbsent = Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _statCard({
+    required IconData icon,
+    required String title,
+    required bool italic,
+    required String subtitle,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textColor = AppColors.of(context).text;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14.0, 12.0, 14.0, 12.0),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(18.0),
+      ),
+      child: Row(
         children: [
-          Icon(
-            SubjectIcon.resolveVariant(
-                subject: absences.last.subject, context: context),
-            color: Colors.white,
-            size: 64,
-          ),
-          Text(
-            absences.last.subject.renamedTo ??
-                absences.last.subject.name.capital(),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 36.0,
-              fontStyle: absences.last.subject.isRenamed &&
-                      settingsProvider.renamedSubjectsItalics
-                  ? FontStyle.italic
-                  : null,
-              color: Colors.white,
+          Container(
+            width: 38.0,
+            height: 38.0,
+            decoration: BoxDecoration(
+              color: colorScheme.secondary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Icon(
+              icon,
+              color: colorScheme.secondary,
+              size: 19.0,
             ),
           ),
-          Text(
-            'absence'.i18n.fill([absences.last.absences.length]),
-            style: const TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
+          const SizedBox(width: 12.0),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16.0,
+                    fontStyle: italic ? FontStyle.italic : null,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 3.0),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13.0,
+                    color: textColor.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
             ),
-          )
+          ),
         ],
       ),
+    );
+  }
+
+  void generateTiles() {
+    Widget leastAbsent = _statCard(
+      icon: SubjectIcon.resolveVariant(
+          subject: absences.last.subject, context: context),
+      title: absences.last.subject.renamedTo ??
+          absences.last.subject.name.capital(),
+      italic: absences.last.subject.isRenamed &&
+          settingsProvider.renamedSubjectsItalics,
+      subtitle: 'absence'.i18n.fill([absences.last.absences.length]),
     );
     if (absences.last.absences.isNotEmpty) {
       lessons.add(leastAbsent);
     } else {
-      lessons.add(buildFaceWidget());
+      lessons.add(Empty(subtitle: 'no_lesson'.i18n));
     }
 
-    Widget mostAbsent = Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            SubjectIcon.resolveVariant(
-                subject: absences.first.subject, context: context),
-            color: Colors.white,
-            size: 64,
-          ),
-          Text(
-            absences.first.subject.renamedTo ??
-                absences.first.subject.name.capital(),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 36.0,
-              fontStyle: absences.first.subject.isRenamed &&
-                      settingsProvider.renamedSubjectsItalics
-                  ? FontStyle.italic
-                  : null,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            'absence'.i18n.fill([absences.first.absences.length]),
-            style: const TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          )
-        ],
-      ),
+    Widget mostAbsent = _statCard(
+      icon: SubjectIcon.resolveVariant(
+          subject: absences.first.subject, context: context),
+      title: absences.first.subject.renamedTo ??
+          absences.first.subject.name.capital(),
+      italic: absences.first.subject.isRenamed &&
+          settingsProvider.renamedSubjectsItalics,
+      subtitle: 'absence'.i18n.fill([absences.first.absences.length]),
     );
     if (absences.first.absences.isNotEmpty) {
       lessons.add(mostAbsent);
     } else {
-      lessons.add(buildFaceWidget());
+      lessons.add(Empty(subtitle: 'no_lesson'.i18n));
     }
 
-    Widget mostDelays = Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            SubjectIcon.resolveVariant(
-                subject: delays.first.subject, context: context),
-            color: Colors.white,
-            size: 64,
-          ),
-          Text(
-            delays.first.subject.renamedTo ??
-                delays.first.subject.name.capital(),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 36.0,
-              fontStyle: delays.first.subject.isRenamed &&
-                      settingsProvider.renamedSubjectsItalics
-                  ? FontStyle.italic
-                  : null,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            'delay'.i18n.fill([delays.first.delay]),
-            style: const TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
-            ),
-          )
-        ],
-      ),
+    Widget mostDelays = _statCard(
+      icon: SubjectIcon.resolveVariant(
+          subject: delays.first.subject, context: context),
+      title:
+          delays.first.subject.renamedTo ?? delays.first.subject.name.capital(),
+      italic: delays.first.subject.isRenamed &&
+          settingsProvider.renamedSubjectsItalics,
+      subtitle: 'delay'.i18n.fill([delays.first.delay]),
     );
     if (delays.first.delay != 0) {
       lessons.add(mostDelays);
     } else {
-      lessons.add(buildFaceWidget());
+      lessons.add(Empty(subtitle: 'no_lesson'.i18n));
     }
   }
 
@@ -262,59 +232,29 @@ class LessonsBodyState extends State<LessonsBody> {
     getAndSortDelays();
     generateTiles();
 
-    return Expanded(
-      child: ListView(
+    final headingStyle = TextStyle(
+      fontSize: 22.0,
+      fontWeight: FontWeight.w800,
+      color: AppColors.of(context).text,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text('title_lessons'.i18n, style: headingStyle),
+          const SizedBox(height: 16.0),
           lessons[0],
-          const SizedBox(height: 18.0),
-          Text(
-            'dontfelt'.i18n,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 18.0),
+          const SizedBox(height: 28.0),
+          Text('dontfelt'.i18n, style: headingStyle),
+          const SizedBox(height: 16.0),
           lessons[1],
-          const SizedBox(height: 18.0),
-          Text(
-            'youlate'.i18n,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22.0,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 18.0),
+          const SizedBox(height: 28.0),
+          Text('youlate'.i18n, style: headingStyle),
+          const SizedBox(height: 16.0),
           lessons[2],
         ],
-      ),
-    );
-  }
-
-  Widget buildFaceWidget() {
-    int index = Random(DateTime.now().minute).nextInt(faces.length);
-    return Center(
-      child: Text.rich(
-        TextSpan(
-          text: faces[index],
-          style: const TextStyle(
-            fontSize: 32.0,
-            fontWeight: FontWeight.w500,
-            color: Colors.white,
-          ),
-          children: [
-            TextSpan(
-              text: "\n${'no_lesson'.i18n}",
-              style: TextStyle(
-                  fontSize: 18.0,
-                  height: 2.0,
-                  color: Colors.white.withValues(alpha: 0.5)),
-            ),
-          ],
-        ),
-        textAlign: TextAlign.center,
       ),
     );
   }

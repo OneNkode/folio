@@ -1,4 +1,5 @@
 import 'package:folio/api/providers/user_provider.dart';
+import 'package:folio/theme/colors/colors.dart';
 import 'package:folio_kreta_api/models/absence.dart';
 import 'package:folio_kreta_api/models/grade.dart';
 import 'package:folio_kreta_api/models/subject.dart';
@@ -148,29 +149,49 @@ class AllSumBodyState extends State<AllSumBody> {
   }
 
   void generateTiles() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final colorPairs = [
+      (colorScheme.primaryContainer, colorScheme.onPrimaryContainer),
+      (colorScheme.secondaryContainer, colorScheme.onSecondaryContainer),
+      (colorScheme.tertiaryContainer, colorScheme.onTertiaryContainer),
+    ];
+
+    var index = 0;
     for (var i in things.values) {
-      Widget w = Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            i.values.toList()[1].toString(),
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 36.0,
-              color: Colors.white,
+      final (bg, fg) = colorPairs[index % colorPairs.length];
+
+      Widget w = Container(
+        padding: const EdgeInsets.all(14.0),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              i.values.toList()[1].toString(),
+              maxLines: 1,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: 28.0,
+                color: fg,
+              ),
             ),
-          ),
-          Text(
-            i.values.toList()[0],
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 18.0,
-              color: Colors.white,
+            const SizedBox(height: 2.0),
+            Text(
+              i.values.toList()[0],
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12.0,
+                color: fg.withValues(alpha: 0.75),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 
       // TO-DO: az orakat es a hazikat szarul keri le, de majd meg lesz csinalva
@@ -181,6 +202,7 @@ class AllSumBodyState extends State<AllSumBody> {
       } else {
         break;
       }
+      index++;
     }
   }
 
@@ -189,40 +211,49 @@ class AllSumBodyState extends State<AllSumBody> {
     getEverything();
     generateTiles();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 24.0),
       children: [
-        const SizedBox(
-          height: 45,
+        Text(
+          'title_allsum'.i18n,
+          style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.w800,
+            color: AppColors.of(context).text,
+          ),
         ),
-        AnimatedContainer(
-          curve: Curves.easeInOut,
-          duration: const Duration(milliseconds: 420),
-          transform: Matrix4.translationValues(
-              animation ? 0 : MediaQuery.of(context).size.width, 0, 0),
-          height: 250,
-          child: GridView.count(
-            crossAxisCount: 3,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 5,
-            children: firstSixTiles,
+        const SizedBox(height: 16.0),
+        ClipRect(
+          child: AnimatedContainer(
+            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 420),
+            transform: Matrix4.translationValues(
+                animation ? 0 : MediaQuery.of(context).size.width, 0, 0),
+            height: 250,
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: firstSixTiles,
+            ),
           ),
         ),
         const SizedBox(
-          height: 30,
+          height: 24,
         ),
-        AnimatedContainer(
-          curve: Curves.easeInOut,
-          duration: const Duration(milliseconds: 420),
-          transform: Matrix4.translationValues(
-              animation ? 0 : -MediaQuery.of(context).size.width, 0, 0),
-          height: 250,
-          child: GridView.count(
-            crossAxisCount: 3,
-            mainAxisSpacing: 0,
-            crossAxisSpacing: 5,
-            children: lastSixTiles,
+        ClipRect(
+          child: AnimatedContainer(
+            curve: Curves.easeInOut,
+            duration: const Duration(milliseconds: 420),
+            transform: Matrix4.translationValues(
+                animation ? 0 : -MediaQuery.of(context).size.width, 0, 0),
+            height: 250,
+            child: GridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              children: lastSixTiles,
+            ),
           ),
         ),
       ],

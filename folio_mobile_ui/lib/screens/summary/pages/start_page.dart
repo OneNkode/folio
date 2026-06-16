@@ -1,97 +1,68 @@
 import 'package:folio/api/providers/user_provider.dart';
 import 'package:folio/models/settings.dart';
-import 'package:folio_kreta_api/providers/grade_provider.dart';
-import 'package:folio_mobile_ui/screens/summary/summary_screen.dart';
+import 'package:folio/theme/colors/colors.dart';
 import 'package:folio_mobile_ui/screens/summary/summary_screen.i18n.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 
-class StartBody extends StatefulWidget {
+class StartBody extends StatelessWidget {
   const StartBody({super.key});
 
   @override
-  StartBodyState createState() => StartBodyState();
-}
-
-class StartBodyState extends State<StartBody> {
-  late UserProvider user;
-  late GradeProvider gradeProvider;
-  late SettingsProvider settings;
-
-  late String firstName;
-
-  @override
-  void initState() {
-    super.initState();
-
-    gradeProvider = Provider.of<GradeProvider>(context, listen: false);
-    settings = Provider.of<SettingsProvider>(context, listen: false);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const SizedBox(height: 40.0),
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).pop();
-            showSlidingBottomSheet(
-              context,
-              useRootNavigator: true,
-              builder: (context) => SlidingSheetDialog(
-                color: Colors.black.withValues(alpha: 0.99),
-                duration: const Duration(milliseconds: 400),
-                scrollSpec: const ScrollSpec.bouncingScroll(),
-                snapSpec: const SnapSpec(
-                  snap: true,
-                  snappings: [1.0],
-                  initialSnap: 1.0,
-                  positioning: SnapPositioning.relativeToAvailableSpace,
-                ),
-                minHeight: MediaQuery.of(context).size.height,
-                cornerRadius: 16,
-                cornerRadiusOnFullscreen: 0,
-                builder: (context, state) => const Material(
-                  color: Colors.black,
-                  child: SummaryScreen(
-                    currentPage: 'grades',
-                    isBottomSheet: true,
-                  ),
-                ),
+    final colorScheme = Theme.of(context).colorScheme;
+    final user = Provider.of<UserProvider>(context);
+    final settings = Provider.of<SettingsProvider>(context);
+
+    final nameParts = user.displayName?.split(" ") ?? ["?"];
+    final firstName = !settings.presentationMode
+        ? (nameParts.length > 1 ? nameParts[1] : nameParts[0])
+        : "János";
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 110.0,
+              height: 110.0,
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
               ),
-            );
-          },
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 145,
-                  color: Colors.white,
-                  grade: 0.001,
-                  weight: 0.001,
-                ),
-                Text(
-                  'start'.i18n,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 16.0,
-                    color: Colors.white.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                size: 48.0,
+                color: colorScheme.primary,
+              ),
             ),
-          ),
+            const SizedBox(height: 24.0),
+            Text(
+              'greeting'.i18n.fill([firstName]),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 32.0,
+                fontWeight: FontWeight.w900,
+                color: AppColors.of(context).text,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              'title_start'.i18n,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15.0,
+                fontWeight: FontWeight.w600,
+                color: AppColors.of(context).text.withValues(alpha: 0.7),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 169.69),
-      ],
+      ),
     );
   }
 }

@@ -1,10 +1,5 @@
-import 'package:confetti/confetti.dart';
-import 'package:folio/api/providers/user_provider.dart';
-import 'package:folio/models/settings.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:folio/theme/colors/colors.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:wtf_sliding_sheet/wtf_sliding_sheet.dart';
 import 'summary_screen.i18n.dart';
 
 import 'pages/allsum_page.dart';
@@ -14,208 +9,136 @@ import 'pages/lessons_page.dart';
 import 'pages/personality_page.dart';
 
 class SummaryScreen extends StatefulWidget {
-  final String currentPage;
-  final bool isBottomSheet;
-
-  const SummaryScreen({
-    super.key,
-    this.currentPage = 'personality',
-    this.isBottomSheet = false,
-  });
+  const SummaryScreen({super.key});
 
   @override
   SummaryScreenState createState() => SummaryScreenState();
 
-  static show(
-          {required BuildContext context,
-          String currentPage = 'personality'}) =>
-      Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute(
-          builder: (context) => SummaryScreen(currentPage: currentPage)));
+  static Future<void> show(BuildContext context) => showModalBottomSheet(
+        context: context,
+        backgroundColor: const Color(0x00000000),
+        elevation: 0,
+        isScrollControlled: true,
+        useRootNavigator: true,
+        builder: (context) => const SummaryScreen(),
+      );
 }
 
-class SummaryScreenState extends State<SummaryScreen>
-    with SingleTickerProviderStateMixin {
-  late UserProvider user;
-  late SettingsProvider settings;
+class SummaryScreenState extends State<SummaryScreen> {
+  static const _pageCount = 5;
 
-  ConfettiController? _confettiController;
-
-  late String firstName;
-
-  final LinearGradient _backgroundGradient = const LinearGradient(
-    colors: [
-      Color(0xff1d56ac),
-      Color(0xff170a3d),
-    ],
-    begin: Alignment(-0.8, -1.0),
-    end: Alignment(0.8, 1.0),
-    stops: [-1.0, 1.0],
-  );
+  late final PageController _pageController;
+  int _page = 0;
 
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
   }
 
   @override
   void dispose() {
-    _confettiController?.dispose();
-
+    _pageController.dispose();
     super.dispose();
+  }
+
+  void _goNext() {
+    _pageController.animateToPage(
+      _page + 1,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOutCubic,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<UserProvider>(context);
-    settings = Provider.of<SettingsProvider>(context);
+    final isLastPage = _page == _pageCount - 1;
 
-    List<String> nameParts = user.displayName?.split(" ") ?? ["?"];
-    if (!settings.presentationMode) {
-      firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
-    } else {
-      firstName = "János";
-    }
-
-    return widget.isBottomSheet
-        ? buildContainer()
-        : Scaffold(
-            body: buildContainer(),
-          );
-  }
-
-  Widget buildContainer() {
-    return Container(
-      decoration: BoxDecoration(gradient: _backgroundGradient),
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.92,
       child: Container(
-        decoration: BoxDecoration(gradient: _backgroundGradient),
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              left: 24.0,
-              right: 24.0,
-              top: 15.0,
-              bottom: 40.0,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28.0)),
+        ),
+        child: Column(
+          children: [
+            // Handle
+            Container(
+              width: 42.0,
+              height: 4.0,
+              margin: const EdgeInsets.only(top: 12.0, bottom: 8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(45.0),
+                color: AppColors.of(context).text.withValues(alpha: 0.12),
+              ),
             ),
-            child: Column(
-              crossAxisAlignment: widget.currentPage == 'start'
-                  ? CrossAxisAlignment.center
-                  : CrossAxisAlignment.start,
-              mainAxisAlignment: widget.currentPage == 'start'
-                  ? MainAxisAlignment.spaceBetween
-                  : MainAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'greeting'.i18n.fill([firstName]),
-                            textAlign: TextAlign.left,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            softWrap: true,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                              fontSize: 26.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                          Text(
-                            widget.currentPage == 'start'
-                                ? 'title_start'.i18n
-                                : widget.currentPage == 'grades'
-                                    ? 'title_grades'.i18n
-                                    : widget.currentPage == 'lessons'
-                                        ? 'title_lessons'.i18n
-                                        : widget.currentPage == 'personality'
-                                            ? 'title_personality'.i18n
-                                            : '',
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                            softWrap: false,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22.0,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+
+            // Story-style progress bar
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24.0, 4.0, 24.0, 0.0),
+              child: Row(
+                children: List.generate(_pageCount, (index) {
+                  final active = index <= _page;
+                  return Expanded(
+                    child: Container(
+                      height: 4.0,
+                      margin: const EdgeInsets.symmetric(horizontal: 3.0),
+                      decoration: BoxDecoration(
+                        color: active
+                            ? Theme.of(context).colorScheme.primary
+                            : AppColors.of(context)
+                                .text
+                                .withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(2.0),
                       ),
                     ),
-                    widget.currentPage != 'start'
-                        ? IconButton(
-                            onPressed: () async {
-                              Navigator.of(context).pop();
-                              if (widget.currentPage == 'grades') {
-                                openNewPage(page: 'lessons');
-                              } else if (widget.currentPage == 'lessons') {
-                                openNewPage(page: 'allsum');
-                              } else if (widget.currentPage == 'allsum') {
-                                openNewPage(page: 'personality');
-                              } else {
-                                Navigator.of(context).maybePop();
-                              }
-                            },
-                            icon: Icon(
-                              widget.currentPage == 'personality'
-                                  ? Icons.close_rounded
-                                  : Icons.arrow_forward_rounded,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Container()
-                  ],
-                ),
-                const SizedBox(height: 12.0),
-                widget.currentPage == 'start'
-                    ? const StartBody()
-                    : widget.currentPage == 'grades'
-                        ? const GradesBody()
-                        : widget.currentPage == 'lessons'
-                            ? const LessonsBody()
-                            : widget.currentPage == 'allsum'
-                                ? const AllSumBody()
-                                : const PersonalityBody(),
-              ],
+                  );
+                }),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
 
-  void openNewPage({String page = 'personality'}) {
-    showSlidingBottomSheet(
-      context,
-      useRootNavigator: true,
-      builder: (context) => SlidingSheetDialog(
-        color: Colors.black.withValues(alpha: 0.99),
-        duration: const Duration(milliseconds: 400),
-        scrollSpec: const ScrollSpec.bouncingScroll(),
-        snapSpec: const SnapSpec(
-          snap: true,
-          snappings: [1.0],
-          initialSnap: 1.0,
-          positioning: SnapPositioning.relativeToAvailableSpace,
-        ),
-        minHeight: MediaQuery.of(context).size.height,
-        cornerRadius: 16,
-        cornerRadiusOnFullscreen: 0,
-        builder: (context, state) => Material(
-          color: Colors.black,
-          child: SummaryScreen(
-            currentPage: page,
-            isBottomSheet: true,
-          ),
+            // Pages
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => _page = index),
+                children: const [
+                  StartBody(),
+                  GradesBody(),
+                  LessonsBody(),
+                  AllSumBody(),
+                  PersonalityBody(),
+                ],
+              ),
+            ),
+
+            // Unified next/finish button
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                24.0,
+                12.0,
+                24.0,
+                MediaQuery.of(context).padding.bottom + 12.0,
+              ),
+              child: FilledButton.icon(
+                onPressed: isLastPage
+                    ? () => Navigator.of(context).maybePop()
+                    : _goNext,
+                style: FilledButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 52.0),
+                ),
+                icon: Icon(
+                  isLastPage
+                      ? Icons.check_rounded
+                      : Icons.arrow_forward_rounded,
+                ),
+                label: Text(isLastPage ? 'finish'.i18n : 'next'.i18n),
+              ),
+            ),
+          ],
         ),
       ),
     );
-    //SummaryScreen.show(context: context, currentPage: page);
   }
 }

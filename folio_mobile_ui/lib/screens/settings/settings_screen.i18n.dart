@@ -247,6 +247,12 @@ extension SettingsLocalization on String {
           "navbar_slots": "%s / %s navbar slots used",
           "navbar_more_fixed": "Always shown as last item",
           "more_empty": "All pages are in the navbar",
+          "rarity_title": "Name of Rarities",
+          "common": "Common",
+          "uncommon": "Uncommon",
+          "rare": "Rare",
+          "epic": "Epic",
+          "legendary": "Legendary"
         },
         "hu-HU": {
           "heads_up": "Figyelem!",
@@ -493,6 +499,12 @@ extension SettingsLocalization on String {
           "navbar_slots": "%s / %s navbar hely foglalt",
           "navbar_more_fixed": "Mindig az utolsó helyen jelenik meg",
           "more_empty": "Minden oldal a navbaron van",
+          "rarity_title": "Szintek nevei",
+          "common": "Gyakori",
+          "uncommon": "Nem gyakori",
+          "rare": "Ritka",
+          "epic": "Epikus",
+          "legendary": "Legendás"
         },
         "de-DE": {
           "heads_up": "Achtung!",
@@ -741,6 +753,12 @@ extension SettingsLocalization on String {
           "firebase_reg_token_mismatch": "Registriert, aber FCM-Token hat sich geändert. Wird beim nächsten Start aktualisiert.",
           "firebase_reg_no_token": "FCM-Token konnte nicht von Firebase abgerufen werden.",
           "firebase_checking": "Registrierung wird überprüft...",
+          "rarity_title": "Raritätsbezeichnungen",
+          "common": "Häufig",
+          "uncommon": "Ungewöhnlich",
+          "rare": "Selten",
+          "epic": "Episch",
+          "legendary": "Legendär"
         },
       };
 

@@ -10,6 +10,7 @@ extension Localization on String {
           "good_morning": "Good morning!",
           "good_afternoon": "Good afternoon!",
           "good_evening": "Good evening!",
+          "summary_label": "Summer break",
           "year_end_title": "The school year is over! 🥳",
           "year_end_action": "Go to your summary",
           "remaining min": "%d min(s)",
@@ -39,6 +40,7 @@ extension Localization on String {
           "good_morning": "Jó reggelt!",
           "good_afternoon": "Jó napot!",
           "good_evening": "Jó estét!",
+          "summary_label": "Vakáció",
           "year_end_title": "Vége a tanévnek! 🥳",
           "year_end_action": "Irány az összefoglaláshoz",
           "remaining min": "%d perc",
@@ -68,6 +70,7 @@ extension Localization on String {
           "good_morning": "Guten Morgen!",
           "good_afternoon": "Guten Tag!",
           "good_evening": "Guten Abend!",
+          "summary_label": "Sommerferien",
           "year_end_title": "Das Schuljahr ist vorbei! 🥳",
           "year_end_action": "Zur Zusammenfassung",
           "remaining min": "%d Minute(n)",
@@ -97,4 +100,3 @@ extension Localization on String {
   String plural(int value) => localizePlural(value, this, _t);
   String version(Object modifier) => localizeVersion(modifier, this, _t);
 }
-

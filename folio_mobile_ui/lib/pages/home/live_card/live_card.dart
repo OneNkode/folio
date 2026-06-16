@@ -313,39 +313,80 @@ class LiveCardStateA extends State<LiveCard> {
       case LiveCardState.summary:
         child = LiveCardWidget(
           key: const Key('livecard.summary'),
-          onTap: () =>
-              SummaryScreen.show(context: context, currentPage: 'start'),
-          child: Padding(
-            padding: const EdgeInsets.all(18.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'year_end_title'.i18n,
-                        style: const TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(height: 4.0),
-                      Text(
+          onTap: () => SummaryScreen.show(context),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 14.0, 16.0, 14.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _labelRow('summary_label'.i18n),
+                    const SizedBox(height: 10.0),
+                    Row(
+                      children: [
+                        Container(
+                          width: 38.0,
+                          height: 38.0,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .tertiary
+                                .withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Icon(
+                            Icons.emoji_events_rounded,
+                            size: 19.0,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
+                        ),
+                        const SizedBox(width: 12.0),
+                        Expanded(
+                          child: Text(
+                            'year_end_title'.i18n,
+                            style: const TextStyle(
+                              fontSize: 20.0,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _divider(),
+              Container(
+                width: double.infinity,
+                color: AppColors.of(context).text.withValues(alpha: 0.03),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 11.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
                         'year_end_action'.i18n,
                         style: TextStyle(
-                          fontSize: 14.0,
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
                           color:
-                              AppColors.of(context).text.withValues(alpha: 0.6),
+                              AppColors.of(context).text.withValues(alpha: 0.7),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 16.0,
+                      color: AppColors.of(context).text.withValues(alpha: 0.4),
+                    ),
+                  ],
                 ),
-                Icon(
-                  Icons.arrow_forward_rounded,
-                  color: AppColors.of(context).text.withValues(alpha: 0.4),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
         break;

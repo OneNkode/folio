@@ -77,6 +77,8 @@ const settingsDB = DatabaseStruct("settings", {
   "adaptive_seed_color": int,
   // navbar item order (JSON-encoded list of page names)
   "navbar_order": String,
+  // home dashboard widget layout (JSON-encoded list)
+  "home_layout": String,
 });
 // DON'T FORGET TO UPDATE DEFAULT VALUES IN `initDB` MIGRATION OR ELSE PARENTS WILL COMPLAIN ABOUT THEIR CHILDREN MISSING
 // YOU'VE BEEN WARNED!!!

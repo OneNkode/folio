@@ -1036,7 +1036,7 @@ class GradeRarityTextSetting extends StatefulWidget {
 
 class _GradeRarityTextSettingState extends State<GradeRarityTextSetting> {
   late List<TextEditingController> _controllers;
-  final List<String> _keys = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
+  final List<String> _keys = ['1', '2', '3', '4', '5'];
 
   @override
   void initState() {
@@ -1071,7 +1071,12 @@ class _GradeRarityTextSettingState extends State<GradeRarityTextSetting> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: EdgeInsets.fromLTRB(
+        16.0,
+        8.0,
+        16.0,
+        8.0 + MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1086,7 +1091,7 @@ class _GradeRarityTextSettingState extends State<GradeRarityTextSetting> {
             child: TextField(
               controller: _controllers[i],
               decoration: InputDecoration(
-                labelText: _keys[i],
+                labelText: widget.defaultRarities[i],
                 border: const OutlineInputBorder(),
               ),
             ),

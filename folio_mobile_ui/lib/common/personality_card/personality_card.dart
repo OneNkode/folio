@@ -1,4 +1,3 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:folio/api/providers/user_provider.dart';
 import 'package:folio/helpers/average_helper.dart';
 import 'package:folio/models/settings.dart';
@@ -190,6 +189,8 @@ class _PersonalityCardState extends State<PersonalityCard> {
   }
 
   Widget cardInnerBuilder() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     Map<PersonalityType, Map<String, String>> personality = {
       PersonalityType.geek: {
         'emoji': '🤓',
@@ -277,51 +278,63 @@ class _PersonalityCardState extends State<PersonalityCard> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            personality[i]?['emoji'] ?? '❓',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 128.0,
-              height: 1.2,
+          Container(
+            width: 88.0,
+            height: 88.0,
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                personality[i]?['emoji'] ?? '❓',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 40.0,
+                  height: 1.2,
+                ),
+              ),
             ),
           ),
+          const SizedBox(height: 16),
           Text(
             (personality[i]?['title'] ?? 'unknown').i18n,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 38.0,
-              color: Colors.white,
+            style: TextStyle(
+              fontSize: 26.0,
+              color: colorScheme.onPrimaryContainer,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 8),
           Text(
             (personality[i]?['description'] ?? 'unknown_personality').i18n,
-            textAlign: TextAlign.start,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 16,
-              height: 1.2,
-              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: 15,
+              height: 1.3,
+              color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 25),
           Text(
-            (personality[i]?['subtitle'] ?? 'unknown').i18n,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 20.0,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
             personality[i]?['subvalue'] ?? '0',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 69.0,
-              height: 1.15,
-              color: Colors.white,
+            style: TextStyle(
+              fontSize: 40.0,
+              height: 1.1,
+              color: colorScheme.onPrimaryContainer,
               fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            (personality[i]?['subtitle'] ?? 'unknown').i18n,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13.0,
+              color: colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -347,29 +360,13 @@ class _PersonalityCardState extends State<PersonalityCard> {
         curve: Curves.easeInOutBack,
         duration: const Duration(milliseconds: 300),
         child: Container(
-          padding:
-              const EdgeInsets.only(top: 12, bottom: 12, left: 12, right: 12),
+          width: double.infinity,
+          padding: const EdgeInsets.all(28.0),
           decoration: BoxDecoration(
-            color: const Color(0x280008FF),
-            borderRadius: const BorderRadius.all(Radius.circular(5)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.08),
-                offset: const Offset(0, 5),
-                blurRadius: 20,
-                spreadRadius: 10,
-              ),
-            ],
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: const BorderRadius.all(Radius.circular(24)),
           ),
-          child: DottedBorder(
-            options: const RectDottedBorderOptions(
-              color: Colors.black,
-              dashPattern: [12, 12],
-              padding:
-                  EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
-            ),
-            child: cardInnerBuilder(),
-          ),
+          child: cardInnerBuilder(),
         ),
       ),
     );
