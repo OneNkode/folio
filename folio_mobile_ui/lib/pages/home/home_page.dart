@@ -24,6 +24,7 @@ import 'package:folio/api/providers/user_provider.dart';
 import 'package:folio/api/providers/status_provider.dart';
 import 'package:folio_kreta_api/providers/timetable_provider.dart';
 import 'package:folio_mobile_ui/common/empty.dart';
+import 'package:folio_mobile_ui/common/filter_bar.dart';
 import 'package:folio_mobile_ui/common/widgets/update/update_dialog.dart';
 import 'package:folio_mobile_ui/common/widgets/update/update_tile.dart';
 import 'package:folio_mobile_ui/pages/home/live_card/live_card.dart';
@@ -290,7 +291,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                     right: 24.0,
                                     top: 32.0 +
                                         MediaQuery.of(context).padding.top,
-                                    bottom: 56.0,
+                                    bottom: 48.0,
                                   ),
                                   child: Transform.scale(
                                     scale: _liveCardAnimation.value,
@@ -303,9 +304,19 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               ),
                             ),
                             shadowColor: Colors.black,
-                            bottom: _HomeCategoryBar(
-                              tabController: _tabController,
-                              onTap: (i) {
+                            // Filter Bar
+                            bottom: FilterBar(
+                              items: [
+                                Tab(text: "All".i18n),
+                                Tab(text: "Grades".i18n),
+                                Tab(text: "Exams".i18n),
+                                Tab(text: "Messages".i18n),
+                                Tab(text: "Absences".i18n),
+                              ],
+                              controller: _tabController,
+                              disableFading: true,
+                              pillStyle: true,
+                              onTap: (i) async {
                                 performHapticFeedback(settings.vibrate);
                                 int selectedPage =
                                     _pageController.page!.round();
@@ -319,6 +330,7 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   return;
                                 }
 
+                                // swap current page with target page
                                 setState(() {
                                   _pageController.jumpToPage(i);
                                   String currentList = listOrder[selectedPage];
@@ -490,100 +502,6 @@ class HomePageState extends State<HomePage> with TickerProviderStateMixin {
           itemCount: max(filterWidgets.length, 1),
         ),
       ),
-    );
-  }
-}
-
-class _HomeCategoryBar extends StatelessWidget implements PreferredSizeWidget {
-  const _HomeCategoryBar({
-    required this.tabController,
-    required this.onTap,
-  });
-
-  final TabController tabController;
-  final void Function(int) onTap;
-
-  @override
-  Size get preferredSize => const Size.fromHeight(56.0);
-
-  static const _icons = <IconData>[
-    Icons.apps_rounded,
-    Icons.star_rounded,
-    Icons.assignment_rounded,
-    Icons.mail_rounded,
-    Icons.event_busy_rounded,
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final labels = [
-      'All'.i18n,
-      'Grades'.i18n,
-      'Exams'.i18n,
-      'Messages'.i18n,
-      'Absences'.i18n,
-    ];
-
-    return AnimatedBuilder(
-      animation: tabController,
-      builder: (context, _) {
-        final selected = tabController.index;
-        final secondary = Theme.of(context).colorScheme.secondaryContainer;
-        final onSecondary =
-            Theme.of(context).colorScheme.onSecondaryContainer;
-        final unselectedColor =
-            AppColors.of(context).text.withValues(alpha: 0.5);
-
-        return Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          height: preferredSize.height,
-          padding:
-              const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
-          child: Row(
-            children: List.generate(5, (i) {
-              final isSelected = i == selected;
-              return Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => onTap(i),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.easeInOut,
-                    margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      color: isSelected ? secondary : Colors.transparent,
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          _icons[i],
-                          size: 20.0,
-                          color: isSelected ? onSecondary : unselectedColor,
-                        ),
-                        const SizedBox(height: 2.0),
-                        Text(
-                          labels[i],
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 10.5,
-                            fontWeight: isSelected
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                            color:
-                                isSelected ? onSecondary : unselectedColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        );
-      },
     );
   }
 }
